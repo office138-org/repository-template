@@ -1,0 +1,25 @@
+name: Post-Merge Full Validation
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  full:
+    uses: office138-org/ci-standards/.github/workflows/post-merge.yml@v1
+    with:
+      python_version: "3.12"
+      requirements_file: requirements-dev.txt
+      cache_dependency_paths: |
+        requirements.txt
+        requirements-dev.txt
+      pytest_root: tests/
+      xdist_workers: auto
+      xdist_mode: worksteal
+      require_pr_provenance: true
