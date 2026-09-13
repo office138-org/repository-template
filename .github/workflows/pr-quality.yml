@@ -1,0 +1,28 @@
+name: PR Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: office138-org/ci-standards/.github/workflows/pr-gate.yml@v1
+    with:
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      python_version: "3.12"
+      requirements_file: requirements-dev.txt
+      cache_dependency_paths: |
+        requirements.txt
+        requirements-dev.txt
+      typecheck_roots: "src tools app"
+      governance_tests: "tests/test_repository_bootstrap.py"
+      critical_tests: "tests/test_smoke.py"
